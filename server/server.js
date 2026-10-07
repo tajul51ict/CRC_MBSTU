@@ -35,9 +35,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Static Files
-// Serve uploaded images
+// Serve uploaded images (both /uploads and /CRC_MBSTU/uploads)
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
-// Serve frontend assets (HTML, CSS, JS) from project root
+app.use('/CRC_MBSTU/uploads', express.static(path.join(__dirname, '../uploads')));
+
+// Serve frontend assets (both root and /CRC_MBSTU subpath)
+app.use('/CRC_MBSTU', express.static(path.join(__dirname, '..')));
 app.use(express.static(path.join(__dirname, '..')));
 
 // REST API Routes
