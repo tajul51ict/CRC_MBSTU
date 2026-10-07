@@ -5,6 +5,25 @@ services:
     plan: free
     buildCommand: npm install
     startCommand: npm start
+    healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
         value: production
+      - key: PORT
+        value: 10000
+      - key: DB_HOST
+        sync: false          # Fill in from Aiven dashboard
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_NAME
+        sync: false
+      - key: DB_PORT
+        value: 3306
+      - key: DB_SSL
+        value: "true"        # Required for Aiven / cloud MySQL
+      - key: JWT_SECRET
+        generateValue: true  # Render auto-generates a secure random value
+      - key: SESSION_SECRET
+        generateValue: true
