@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Volunteer Activities - Come for Road Child (CRC), MBSTU</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <!-- Google Fonts Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
+    <div class="container">
+      <a class="navbar-brand" href="/index.html">
+        <i class="bi bi-heart-pulse-fill text-warning"></i>
+        <span>CRC MBSTU</span>
+        <span class="badge-accent">Volunteer</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarMain">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
+          <li class="nav-item"><a class="nav-link" href="/index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="/about.html">About</a></li>
+          <li class="nav-item"><a class="nav-link active" href="/activities.html">Activities</a></li>
+          <li class="nav-item"><a class="nav-link" href="/committee.html">Committee</a></li>
+          <li class="nav-item"><a class="nav-link" href="/gallery.html">Gallery</a></li>
+        </ul>
+        <ul class="navbar-nav ms-auto align-items-lg-center" id="navbar-auth-links">
+          <li class="nav-item"><a class="nav-link" href="/login.html"><i class="bi bi-box-arrow-in-right"></i> Login</a></li>
+          <li class="nav-item ms-lg-2"><a class="btn btn-nav-auth" href="/register.html">Join CRC</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <div class="py-5 text-white" style="background-color: var(--primary-color);">
+    <div class="container text-center py-3">
+      <h1 class="text-white mb-2">Our Activities & Humanitarian Drives</h1>
+      <p class="lead mb-0 text-light opacity-90">Explore and join our upcoming volunteer initiatives</p>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="py-5">
+    <div class="container">
+
+      <!-- Status Filter Tabs -->
+      <div class="d-flex justify-content-center flex-wrap gap-2 mb-4">
+        <button class="btn btn-primary-crc active activity-filter-btn" data-status="">
+          All Activities
+        </button>
+        <button class="btn btn-outline-primary-crc activity-filter-btn" data-status="upcoming">
+          Upcoming
+        </button>
+        <button class="btn btn-outline-primary-crc activity-filter-btn" data-status="ongoing">
+          Ongoing
+        </button>
+        <button class="btn btn-outline-primary-crc activity-filter-btn" data-status="completed">
+          Completed
+        </button>
+      </div>
+
+      <!-- Activities Grid (Dynamically rendered via API) -->
+      <div class="row" id="activities-grid">
+        <div class="col-12 text-center py-5">
+          <div class="spinner-border text-primary" role="status"></div>
+          <p class="mt-2 text-muted">Loading activities from server...</p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer-custom">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-lg-4 col-md-6">
+          <h5 class="fw-bold"><i class="bi bi-heart-pulse-fill text-warning me-2"></i>CRC MBSTU</h5>
+          <p class="small text-light opacity-75">
+            Come for Road Child (CRC), MBSTU is dedicated to the education, welfare, and social empowerment of underprivileged street children in Tangail.
+          </p>
+          <div class="small text-light opacity-75">
+            <i class="bi bi-geo-alt-fill text-warning me-1"></i> MBSTU Campus, Santosh, Tangail-1902, Bangladesh
+          </div>
+        </div>
+        <div class="col-lg-2 col-md-6">
+          <h5>Quick Links</h5>
+          <ul class="list-unstyled small">
+            <li class="mb-2"><a href="/index.html">Home</a></li>
+            <li class="mb-2"><a href="/about.html">About Us</a></li>
+            <li class="mb-2"><a href="/activities.html">Activities</a></li>
+            <li class="mb-2"><a href="/committee.html">Committee</a></li>
+            <li class="mb-2"><a href="/gallery.html">Gallery</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <h5>Get Involved</h5>
+          <ul class="list-unstyled small">
+            <li class="mb-2"><a href="/register.html">Become a Volunteer</a></li>
+            <li class="mb-2"><a href="/login.html">Member Portal</a></li>
+            <li class="mb-2"><a href="/activities.html">Participate in Drives</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <h5>Contact CRC</h5>
+          <p class="small text-light opacity-75 mb-2">
+            <i class="bi bi-envelope-fill text-warning me-2"></i> info@crcmbstu.com
+          </p>
+          <p class="small text-light opacity-75">
+            <i class="bi bi-telephone-fill text-warning me-2"></i> +880 1700-000000
+          </p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="container">
+          <p class="mb-0 text-light opacity-75">
+            &copy; 2026 Come for Road Child (CRC), MBSTU. All Rights Reserved.
+          </p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap 5 JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Custom JS -->
+  <script src="/js/script.js"></script>
+</body>
+</html>

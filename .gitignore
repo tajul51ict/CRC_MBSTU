@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Environment variables
+.env
+
+# Uploaded media (keep structure via .gitkeep)
+uploads/activities/*
+!uploads/activities/.gitkeep
+uploads/committee/*
+!uploads/committee/.gitkeep
+uploads/gallery/*
+!uploads/gallery/.gitkeep
+
+# System & IDE files
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/
