@@ -1,8 +1,25 @@
-/**
+﻿/**
  * CRC MBSTU - Frontend JavaScript
  * Come for Road Child (CRC), MBSTU
  * Vanilla JS with fetch() API communication
  */
+
+// ==========================================
+// 0. Base Path Detection (GitHub Pages vs Local)
+// ==========================================
+
+// Automatically resolves correct base path:
+//   GitHub Pages: /CRC_MBSTU
+//   Local Express: (empty string)
+const BASE_PATH = (function() {
+  const host = window.location.hostname;
+  if (host.includes('github.io')) {
+    // Extract the repo name from pathname, e.g. /CRC_MBSTU/
+    const parts = window.location.pathname.split('/');
+    return '/' + (parts[1] || 'CRC_MBSTU');
+  }
+  return '';
+})();
 
 // ==========================================
 // 1. Storage & Authentication Helpers
@@ -44,16 +61,16 @@ function checkPageAuth(requiredRole) {
   const token = getToken();
 
   if (!token || !user) {
-    window.location.href = '/login.html?redirect=' + encodeURIComponent(window.location.pathname);
+    window.location.href = BASE_PATH + '/login.html?redirect=' + encodeURIComponent(window.location.pathname);
     return false;
   }
 
   if (requiredRole && user.role !== requiredRole) {
     // If admin is trying to access member page or member trying to access admin page
     if (user.role === 'admin') {
-      window.location.href = '/admin/dashboard.html';
+      window.location.href = BASE_PATH + '/admin/dashboard.html';
     } else {
-      window.location.href = '/member/dashboard.html';
+      window.location.href = BASE_PATH + '/member/dashboard.html';
     }
     return false;
   }
@@ -128,7 +145,7 @@ function initNavbarAuth() {
 
   const user = getUser();
   if (user && isAuthenticated()) {
-    const dashboardLink = user.role === 'admin' ? '/admin/dashboard.html' : '/member/dashboard.html';
+    const dashboardLink = user.role === 'admin' ? (BASE_PATH + '/admin/dashboard.html') : (BASE_PATH + '/member/dashboard.html');
     authNav.innerHTML = `
       <li class="nav-item">
         <a class="nav-link text-warning fw-semibold" href="${dashboardLink}">
@@ -149,10 +166,10 @@ function initNavbarAuth() {
   } else {
     authNav.innerHTML = `
       <li class="nav-item">
-        <a class="nav-link" href="/login.html"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+        <a class="nav-link" href="${BASE_PATH}/login.html"><i class="bi bi-box-arrow-in-right"></i> Login</a>
       </li>
       <li class="nav-item ms-lg-2">
-        <a class="btn btn-nav-auth" href="/register.html">Join CRC</a>
+        <a class="btn btn-nav-auth" href="${BASE_PATH}/register.html">Join CRC</a>
       </li>
     `;
   }
@@ -166,7 +183,7 @@ async function handleLogout(e) {
     // Ignore error on logout
   }
   clearSession();
-  window.location.href = '/login.html';
+  window.location.href = BASE_PATH + '/login.html';
 }
 
 // ==========================================
@@ -180,7 +197,7 @@ function initLoginPage() {
   // If already logged in, redirect to dashboard
   const user = getUser();
   if (user && isAuthenticated()) {
-    window.location.href = user.role === 'admin' ? '/admin/dashboard.html' : '/member/dashboard.html';
+    window.location.href = user.role === 'admin' ? (BASE_PATH + '/admin/dashboard.html') : (BASE_PATH + '/member/dashboard.html');
     return;
   }
 
@@ -209,7 +226,7 @@ function initLoginPage() {
         setSession(res.token, res.user);
         showAlert(alertBox, 'Login successful! Redirecting...', 'success');
         setTimeout(() => {
-          window.location.href = res.redirectUrl || (res.user.role === 'admin' ? '/admin/dashboard.html' : '/member/dashboard.html');
+          window.location.href = res.redirectUrl || (res.user.role === 'admin' ? (BASE_PATH + '/admin/dashboard.html') : (BASE_PATH + '/member/dashboard.html'));
         }, 800);
       }
     } catch (error) {
@@ -361,11 +378,11 @@ async function initActivitiesPage() {
 }
 
 function renderActivityCard(act) {
-  const imgPath = act.image ? `/uploads/activities/${act.image}` : 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="250"><rect fill="%231E3A5F" width="100%" height="100%"/><text fill="%23FFFFFF" x="50%" y="50%" text-anchor="middle">CRC MBSTU</text></svg>';
+  const imgPath = act.image ? `${BASE_PATH}/uploads/activities/${act.image}` : 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="250"><rect fill="%231E3A5F" width="100%" height="100%"/><text fill="%23FFFFFF" x="50%" y="50%" text-anchor="middle">CRC MBSTU</text></svg>';
   return `
     <div class="col-md-6 col-lg-4 mb-4">
       <div class="card card-crc">
-        <img src="${imgPath}" class="card-img-top" alt="${act.title}" onerror="this.src='/uploads/activities/winter-drive.jpg'">
+        <img src="${imgPath}" class="card-img-top" alt="${act.title}" onerror="this.src='${BASE_PATH}/uploads/activities/winter-drive.jpg'">
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center mb-2">
             <span class="badge-status ${act.status}">${act.status}</span>
@@ -379,7 +396,7 @@ function renderActivityCard(act) {
             ${act.description ? (act.description.length > 105 ? act.description.substring(0, 105) + '...' : act.description) : 'No description available.'}
           </p>
           <div class="mt-3 pt-2 border-top">
-            <a href="/activity-details.html?id=${act.id}" class="btn btn-primary-crc w-100">
+            <a href="${BASE_PATH}/activity-details.html?id=${act.id}" class="btn btn-primary-crc w-100">
               <i class="bi bi-info-circle me-1"></i> View Details
             </a>
           </div>
@@ -408,7 +425,7 @@ async function initActivityDetailsPage() {
 
     if (res.success && res.data) {
       const act = res.data;
-      const imgPath = act.image ? `/uploads/activities/${act.image}` : '/uploads/activities/winter-drive.jpg';
+      const imgPath = act.image ? `${BASE_PATH}/uploads/activities/${act.image}` : '${BASE_PATH}/uploads/activities/winter-drive.jpg';
       const user = getUser();
 
       let joinBtnHtml = '';
@@ -416,7 +433,7 @@ async function initActivityDetailsPage() {
         joinBtnHtml = `
           <div class="alert alert-info d-flex justify-content-between align-items-center mb-0">
             <span>Want to participate as a volunteer in this activity?</span>
-            <a href="/login.html?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}" class="btn btn-sm btn-primary-crc">
+            <a href="${BASE_PATH}/login.html?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}" class="btn btn-sm btn-primary-crc">
               <i class="bi bi-box-arrow-in-right me-1"></i> Login to Join
             </a>
           </div>
@@ -424,14 +441,14 @@ async function initActivityDetailsPage() {
       } else if (user.role === 'admin') {
         joinBtnHtml = `
           <div class="alert alert-secondary mb-0">
-            <i class="bi bi-shield-lock me-1"></i> You are logged in as Administrator. To manage this activity, visit the <a href="/admin/activities.html" class="fw-bold">Admin Activities Portal</a>.
+            <i class="bi bi-shield-lock me-1"></i> You are logged in as Administrator. To manage this activity, visit the <a href="${BASE_PATH}/admin/activities.html" class="fw-bold">Admin Activities Portal</a>.
           </div>
         `;
       } else if (act.isJoined) {
         joinBtnHtml = `
           <div class="alert alert-success d-flex align-items-center mb-0">
             <i class="bi bi-check-circle-fill fs-4 me-2"></i>
-            <div><strong>You have already joined this activity!</strong> Check your schedule in <a href="/member/my-activities.html">My Activities</a>.</div>
+            <div><strong>You have already joined this activity!</strong> Check your schedule in <a href="${BASE_PATH}/member/my-activities.html">My Activities</a>.</div>
           </div>
         `;
       } else if (act.status === 'completed') {
@@ -452,7 +469,7 @@ async function initActivityDetailsPage() {
         <div class="card card-crc p-0 overflow-hidden shadow-sm">
           <div class="row g-0">
             <div class="col-lg-6">
-              <img src="${imgPath}" class="img-fluid w-100 h-100" style="object-fit: cover; min-height: 340px;" alt="${act.title}" onerror="this.src='/uploads/activities/winter-drive.jpg'">
+              <img src="${imgPath}" class="img-fluid w-100 h-100" style="object-fit: cover; min-height: 340px;" alt="${act.title}" onerror="this.src='${BASE_PATH}/uploads/activities/winter-drive.jpg'">
             </div>
             <div class="col-lg-6 p-4 p-md-5 d-flex flex-direction-column justify-content-between">
               <div>
@@ -493,7 +510,7 @@ async function initActivityDetailsPage() {
               document.getElementById('join-action-area').innerHTML = `
                 <div class="alert alert-success d-flex align-items-center mb-0">
                   <i class="bi bi-check-circle-fill fs-4 me-2"></i>
-                  <div><strong>Success! You have joined this activity.</strong> View all your participations in <a href="/member/my-activities.html">My Activities</a>.</div>
+                  <div><strong>Success! You have joined this activity.</strong> View all your participations in <a href="${BASE_PATH}/member/my-activities.html">My Activities</a>.</div>
                 </div>
               `;
             }
@@ -530,11 +547,11 @@ async function initCommitteePage() {
 }
 
 function renderCommitteeCard(c) {
-  const photoPath = c.photo ? `/uploads/committee/${c.photo}` : '/uploads/committee/president.jpg';
+  const photoPath = c.photo ? `${BASE_PATH}/uploads/committee/${c.photo}` : '${BASE_PATH}/uploads/committee/president.jpg';
   return `
     <div class="col-sm-6 col-md-6 col-lg-3 mb-4">
       <div class="committee-card">
-        <img src="${photoPath}" class="committee-avatar" alt="${c.name}" onerror="this.src='/uploads/committee/president.jpg'">
+        <img src="${photoPath}" class="committee-avatar" alt="${c.name}" onerror="this.src='${BASE_PATH}/uploads/committee/president.jpg'">
         <h5 class="mb-1">${c.name}</h5>
         <div class="committee-position">${c.position}</div>
         <div class="committee-details">
@@ -566,11 +583,11 @@ async function initGalleryPage() {
 }
 
 function renderGalleryItem(g) {
-  const imgPath = g.image ? `/uploads/gallery/${g.image}` : '/uploads/gallery/gallery-1.jpg';
+  const imgPath = g.image ? `${BASE_PATH}/uploads/gallery/${g.image}` : '${BASE_PATH}/uploads/gallery/gallery-1.jpg';
   return `
     <div class="col-sm-6 col-md-4 mb-4">
       <div class="gallery-item">
-        <img src="${imgPath}" alt="${g.title}" onerror="this.src='/uploads/gallery/gallery-1.jpg'">
+        <img src="${imgPath}" alt="${g.title}" onerror="this.src='${BASE_PATH}/uploads/gallery/gallery-1.jpg'">
         <div class="gallery-overlay">
           <p class="gallery-title">${g.title || 'CRC MBSTU Activity'}</p>
         </div>
@@ -622,7 +639,7 @@ async function initMemberDashboard() {
                 <h6 class="fw-bold mb-1">${act.title}</h6>
                 <small class="text-muted mb-3"><i class="bi bi-geo-alt me-1"></i>${act.location || 'MBSTU'}</small>
                 <div class="mt-auto pt-2">
-                  <a href="/activity-details.html?id=${act.id}" class="btn btn-sm btn-outline-primary-crc w-100">View & Join</a>
+                  <a href="${BASE_PATH}/activity-details.html?id=${act.id}" class="btn btn-sm btn-outline-primary-crc w-100">View & Join</a>
                 </div>
               </div>
             </div>
@@ -676,7 +693,7 @@ async function initMyActivitiesPage() {
                   <td><span class="badge-status ${act.status}">${act.status}</span></td>
                   <td><small class="text-muted">${formatDate(act.registered_at)}</small></td>
                   <td>
-                    <a href="/activity-details.html?id=${act.id}" class="btn btn-sm btn-primary-crc">
+                    <a href="${BASE_PATH}/activity-details.html?id=${act.id}" class="btn btn-sm btn-primary-crc">
                       <i class="bi bi-info-circle"></i> Details
                     </a>
                   </td>
@@ -692,7 +709,7 @@ async function initMyActivitiesPage() {
           <i class="bi bi-calendar-x fs-1 text-muted"></i>
           <h5 class="mt-3">You have not joined any activities yet</h5>
           <p class="text-muted">Explore our upcoming humanitarian drives and volunteer programs!</p>
-          <a href="/activities.html" class="btn btn-primary-crc">
+          <a href="${BASE_PATH}/activities.html" class="btn btn-primary-crc">
             <i class="bi bi-compass me-1"></i> Browse Activities
           </a>
         </div>
@@ -1109,7 +1126,7 @@ async function initAdminGalleryPage() {
         container.innerHTML = res.data.map(g => `
           <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
             <div class="card card-crc h-100 shadow-sm">
-              <img src="/uploads/gallery/${g.image}" class="card-img-top" style="height: 180px; object-fit: cover;" alt="${g.title}" onerror="this.src='/uploads/gallery/gallery-1.jpg'">
+              <img src="/uploads/gallery/${g.image}" class="card-img-top" style="height: 180px; object-fit: cover;" alt="${g.title}" onerror="this.src='${BASE_PATH}/uploads/gallery/gallery-1.jpg'">
               <div class="card-body p-3 d-flex flex-column justify-content-between">
                 <h6 class="card-title text-truncate mb-2" title="${g.title}">${g.title || 'Untitled'}</h6>
                 <button class="btn btn-outline-danger btn-sm w-100 btn-delete-gallery" data-id="${g.id}">
