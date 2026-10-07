@@ -1,4 +1,4 @@
-﻿/**
+/**
  * CRC MBSTU - Frontend JavaScript
  * Come for Road Child (CRC), MBSTU
  * Vanilla JS with fetch() API communication
@@ -20,6 +20,26 @@ const BASE_PATH = (function() {
   }
   return '';
 })();
+
+// API Backend URL detection:
+// When running on GitHub Pages, connect to Railway live backend
+const API_BASE = (function() {
+  const host = window.location.hostname;
+  if (host.includes('github.io')) {
+    return 'https://web-production-7c8d7.up.railway.app';
+  }
+  return '';
+})();
+
+function getUploadUrl(subpath) {
+  if (!subpath) return '';
+  if (subpath.startsWith('http')) return subpath;
+  const clean = subpath.startsWith('/') ? subpath : '/' + subpath;
+  if (API_BASE) {
+    return API_BASE + clean;
+  }
+  return BASE_PATH + clean;
+}
 
 // ==========================================
 // 1. Storage & Authentication Helpers
@@ -95,8 +115,10 @@ async function apiFetch(endpoint, options = {}) {
     headers['Content-Type'] = 'application/json';
   }
 
+  const url = endpoint.startsWith('http') ? endpoint : (API_BASE + endpoint);
+
   try {
-    const response = await fetch(endpoint, {
+    const response = await fetch(url, {
       ...options,
       headers
     });
@@ -178,7 +200,7 @@ function initNavbarAuth() {
 async function handleLogout(e) {
   if (e) e.preventDefault();
   try {
-    await fetch('/api/auth/logout', { method: 'POST' });
+    await apiFetch('/api/auth/logout', { method: 'POST' });
   } catch (err) {
     // Ignore error on logout
   }
@@ -378,11 +400,12 @@ async function initActivitiesPage() {
 }
 
 function renderActivityCard(act) {
-  const imgPath = act.image ? `${BASE_PATH}/uploads/activities/${act.image}` : 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="250"><rect fill="%231E3A5F" width="100%" height="100%"/><text fill="%23FFFFFF" x="50%" y="50%" text-anchor="middle">CRC MBSTU</text></svg>';
+  const imgPath = act.image ? getUploadUrl('uploads/activities/' + act.image) : 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="250"><rect fill="%231E3A5F" width="100%" height="100%"/><text fill="%23FFFFFF" x="50%" y="50%" text-anchor="middle">CRC MBSTU</text></svg>';
+  const fallbackImg = getUploadUrl('uploads/activities/winter-drive.jpg');
   return `
     <div class="col-md-6 col-lg-4 mb-4">
       <div class="card card-crc">
-        <img src="${imgPath}" class="card-img-top" alt="${act.title}" onerror="this.src='${BASE_PATH}/uploads/activities/winter-drive.jpg'">
+        <img src="${imgPath}" class="card-img-top" alt="${act.title}" onerror="this.src='${fallbackImg}'">
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center mb-2">
             <span class="badge-status ${act.status}">${act.status}</span>
@@ -425,7 +448,8 @@ async function initActivityDetailsPage() {
 
     if (res.success && res.data) {
       const act = res.data;
-      const imgPath = act.image ? `${BASE_PATH}/uploads/activities/${act.image}` : '${BASE_PATH}/uploads/activities/winter-drive.jpg';
+      const imgPath = act.image ? getUploadUrl('uploads/activities/' + act.image) : getUploadUrl('uploads/activities/winter-drive.jpg');
+      const fallbackImg = getUploadUrl('uploads/activities/winter-drive.jpg');
       const user = getUser();
 
       let joinBtnHtml = '';
@@ -469,7 +493,7 @@ async function initActivityDetailsPage() {
         <div class="card card-crc p-0 overflow-hidden shadow-sm">
           <div class="row g-0">
             <div class="col-lg-6">
-              <img src="${imgPath}" class="img-fluid w-100 h-100" style="object-fit: cover; min-height: 340px;" alt="${act.title}" onerror="this.src='${BASE_PATH}/uploads/activities/winter-drive.jpg'">
+              <img src="${imgPath}" class="img-fluid w-100 h-100" style="object-fit: cover; min-height: 340px;" alt="${act.title}" onerror="this.src='${fallbackImg}'">
             </div>
             <div class="col-lg-6 p-4 p-md-5 d-flex flex-direction-column justify-content-between">
               <div>
@@ -547,11 +571,12 @@ async function initCommitteePage() {
 }
 
 function renderCommitteeCard(c) {
-  const photoPath = c.photo ? `${BASE_PATH}/uploads/committee/${c.photo}` : '${BASE_PATH}/uploads/committee/president.jpg';
+  const photoPath = c.photo ? getUploadUrl('uploads/committee/' + c.photo) : getUploadUrl('uploads/committee/president.jpg');
+  const fallbackPhoto = getUploadUrl('uploads/committee/president.jpg');
   return `
     <div class="col-sm-6 col-md-6 col-lg-3 mb-4">
       <div class="committee-card">
-        <img src="${photoPath}" class="committee-avatar" alt="${c.name}" onerror="this.src='${BASE_PATH}/uploads/committee/president.jpg'">
+        <img src="${photoPath}" class="committee-avatar" alt="${c.name}" onerror="this.src='${fallbackPhoto}'">
         <h5 class="mb-1">${c.name}</h5>
         <div class="committee-position">${c.position}</div>
         <div class="committee-details">
@@ -583,11 +608,12 @@ async function initGalleryPage() {
 }
 
 function renderGalleryItem(g) {
-  const imgPath = g.image ? `${BASE_PATH}/uploads/gallery/${g.image}` : '${BASE_PATH}/uploads/gallery/gallery-1.jpg';
+  const imgPath = g.image ? getUploadUrl('uploads/gallery/' + g.image) : getUploadUrl('uploads/gallery/gallery-1.jpg');
+  const fallbackImg = getUploadUrl('uploads/gallery/gallery-1.jpg');
   return `
     <div class="col-sm-6 col-md-4 mb-4">
       <div class="gallery-item">
-        <img src="${imgPath}" alt="${g.title}" onerror="this.src='${BASE_PATH}/uploads/gallery/gallery-1.jpg'">
+        <img src="${imgPath}" alt="${g.title}" onerror="this.src='${fallbackImg}'">
         <div class="gallery-overlay">
           <p class="gallery-title">${g.title || 'CRC MBSTU Activity'}</p>
         </div>
@@ -1126,7 +1152,7 @@ async function initAdminGalleryPage() {
         container.innerHTML = res.data.map(g => `
           <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
             <div class="card card-crc h-100 shadow-sm">
-              <img src="/uploads/gallery/${g.image}" class="card-img-top" style="height: 180px; object-fit: cover;" alt="${g.title}" onerror="this.src='${BASE_PATH}/uploads/gallery/gallery-1.jpg'">
+              <img src="${getUploadUrl('uploads/gallery/' + g.image)}" class="card-img-top" style="height: 180px; object-fit: cover;" alt="${g.title}" onerror="this.src='${getUploadUrl('uploads/gallery/gallery-1.jpg')}'">
               <div class="card-body p-3 d-flex flex-column justify-content-between">
                 <h6 class="card-title text-truncate mb-2" title="${g.title}">${g.title || 'Untitled'}</h6>
                 <button class="btn btn-outline-danger btn-sm w-100 btn-delete-gallery" data-id="${g.id}">
